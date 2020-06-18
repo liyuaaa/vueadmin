@@ -77,7 +77,7 @@
                   icon="el-icon-delete"
                   type="danger"
                   size="mini"
-                  @click="deleteParams(scoped.row.attr_id)"
+                  @click="deleteParams(scoped.row.id)"
                 >删除</el-button>
               </template>
             </el-table-column>
@@ -139,7 +139,7 @@
                   icon="el-icon-delete"
                   type="danger"
                   size="mini"
-                  @click="deleteParams(scoped.row.attr_id)"
+                  @click="deleteParams(scoped.row.id)"
                 >删除</el-button>
               </template>
             </el-table-column>
@@ -179,7 +179,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="editDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="editEnter">确 定</el-button>
       </span>
     </el-dialog>
@@ -216,12 +216,12 @@ export default {
       },
       editDialogVisible: false, // 编辑弹出框是否显示
       editRuleForm: {
-        // 添加弹出框输入的数据
+        // 编辑弹出框输入的数据
         attr_id: '',
         attr_name: ''
       },
       editRules: {
-        // 添加弹出框的表单验证
+        // 编辑弹出框的表单验证
         attr_name: [
           { required: true, message: '请输入参数名称', trigger: 'blur' },
           { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
@@ -233,7 +233,7 @@ export default {
     // 获取级联选择器的数据
     async getSelectData() {
       const { data: res } = await this.$axios.get('categories')
-      this.selectParamsList = res.data
+      this.selectParamsList = res.data.data
     },
     // 获取参数列表数据
     async getParamsData() {
@@ -302,8 +302,9 @@ export default {
     },
     // 这个是来对new Tag数据更新添加进行操作
     async setHandleInputConfirm(scoped) {
+      console.log(scoped)
       const { data: res } = await this.$axios.put(
-        `categories/${this.selectParamsId}/attributes/${scoped.attr_id}`,
+        `categories/${this.selectParamsId}/attributes/${scoped.id}`,
         {
           attr_name: scoped.attr_name, // 参数名称
           attr_sel: scoped.attr_sel,
@@ -357,7 +358,7 @@ export default {
     // 点击编辑按钮触发的事件
     editParamsShow(row) {
       this.editDialogVisible = true
-      this.editRuleForm.attr_id = row.attr_id
+      this.editRuleForm.attr_id = row.id
       this.editRuleForm.attr_name = row.attr_name
     },
     // 点击编辑弹出框的关闭按钮触发的事件

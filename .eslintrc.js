@@ -17,12 +17,17 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'no-debugger': 'off',
-    "no-tabs": "off",
-    "space-before-function-paren": 0,
-    "eqeqeq": 'off'
+    'no-tabs': 'off',
+    'space-before-function-paren': 0,
+    eqeqeq: 'off'
   },
 
   extends: [
+    'plugin:vue/essential',
+    '@vue/standard'
+  ],
+
+  'extends': [
     'plugin:vue/essential',
     '@vue/standard'
   ]

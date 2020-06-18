@@ -12,34 +12,34 @@
         <el-table-column type="expand">
           <template v-slot="scoped">
             <el-row
-              v-for="(item1,i1) in scoped.row.children"
+              v-for="(item1,i1) in scoped.row.chidren"
               :key="item1.id"
               :class="[i1==0 ?'border_top':'']"
             >
               <!-- 一级菜单 -->
               <el-col :span="6">
-                <el-tag closable @close="removeRolesItem(scoped.row,item1.id)">{{item1.authName}}</el-tag>
+                <el-tag closable @close="removeRolesItem(scoped.row,item1.id)">{{item1.authname}}</el-tag>
                 <i class="el-icon-caret-right"></i>
               </el-col>
               <!-- 二级菜单 -->
               <el-col :span="18">
-                <el-row v-for="item2 in item1.children" :key="item2.id">
+                <el-row v-for="item2 in item1.chidren" :key="item2.id">
                   <el-col :span="6">
                     <el-tag
                       type="success"
                       closable
                       @close="removeRolesItem(scoped.row,item2.id)"
-                    >{{item2.authName}}</el-tag>
+                    >{{item2.authname}}</el-tag>
                     <i class="el-icon-caret-right"></i>
                   </el-col>
                   <el-col :span="18">
                     <el-tag
                       type="danger"
-                      v-for="item3 in item2.children"
+                      v-for="item3 in item2.chidren"
                       :key="item3.id"
                       closable
                       @close="removeRolesItem(scoped.row,item3.id)"
-                    >{{item3.authName}}</el-tag>
+                    >{{item3.authname}}</el-tag>
                   </el-col>
                 </el-row>
               </el-col>
@@ -48,7 +48,7 @@
         </el-table-column>
 
         <el-table-column label="#" type="index"></el-table-column>
-        <el-table-column prop="id" label="id"></el-table-column>
+        <el-table-column prop="roleId" label="id"></el-table-column>
         <el-table-column prop="roleName" label="角色名称"></el-table-column>
         <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
         <el-table-column prop="roleDesc" label="操作" width="300px">
@@ -57,13 +57,13 @@
               type="primary"
               icon="el-icon-edit"
               size="mini"
-              @click="editRoles(scoped.row.id)"
+              @click="editRoles(scoped.row.roleId)"
             >编辑</el-button>
             <el-button
               type="danger"
               icon="el-icon-delete"
               size="mini"
-              @click="deleteRoles(scoped.row.id)"
+              @click="deleteRoles(scoped.row.roleId)"
             >删除</el-button>
             <el-button
               type="warning"
@@ -142,8 +142,8 @@ export default {
       authorityDialogVisible: false, // 分配权限弹出框是否显示
       treeProps: {
         // 分配权限树状的结构列表
-        label: 'authName',
-        children: 'children'
+        label: 'authname',
+        chidren: 'chidren'
       },
       authorityList: [], // 分配权限的数据
       rolesDefKeys: [], // 获取分配权限勾选的数据
@@ -154,7 +154,7 @@ export default {
     // 获取角色列表的数据
     async getRolesData() {
       const { data: res } = await this.$axios.get('roles')
-      console.log(res.data)
+      console.log(res)
       if (res.meta.status != 200) {
         return this.error('获取数据失败！')
       }
@@ -169,13 +169,15 @@ export default {
       })
         .then(async () => {
           const { data: res } = await this.$axios.delete(
-            `roles/${roleId.id}/rights/${rightId}`
+            `roles/${roleId.roleId}/rights/${rightId}`
           )
+          console.log(res.data[0])
           if (res.meta.status != 200) {
             return this.$message.error('数据删除失败！')
           }
           this.$message.success('数据删除成功！')
-          roleId.children = res.data
+          roleId.chidren = res.data[0].chidren
+          console.log(roleId)
         })
         .catch(() => {
           this.$message({
@@ -240,23 +242,25 @@ export default {
     },
     // 点击分配权限按钮做出的事件
     async authorityRoles(scoped) {
+      console.log(scoped)
       this.authorityDialogVisible = true
       // 获取数据
       const { data: res } = await this.$axios.get('rights/tree')
       this.authorityList = res.data
+      console.log(this.authorityList)
       // 调用方法来获取勾选的数据
       this.getCheckedDefkeys(scoped, this.rolesDefKeys)
       // 把点击对应的id赋值给rolesId
-      this.rolesId = scoped.id
+      this.rolesId = scoped.roleId
     },
     // 根据对应的数据来查找该数据可勾选的数据
     getCheckedDefkeys(node, arr) {
       // 判断该数据是否有子节点，没有代表已经没有勾选的数据,并把数据赋值给第二个参数
-      if (!node.children) {
+      if (!node.chidren) {
         return arr.push(node.id)
       }
       // 使用遍历递归来把所有的子节点全部赋给第二个参数
-      node.children.forEach(item => {
+      node.chidren.forEach(item => {
         this.getCheckedDefkeys(item, arr)
       })
     },
@@ -275,6 +279,8 @@ export default {
         ...this.$refs.rolesTreeData.getCheckedKeys(),
         ...this.$refs.rolesTreeData.getHalfCheckedKeys()
       ]
+      console.log(rolesTreeData)
+      console.log(this.rolesId)
       const rolesTreeDatas = rolesTreeData.join(',')
       const { data: res } = await this.$axios.post(
         `roles/${this.rolesId}/rights`,

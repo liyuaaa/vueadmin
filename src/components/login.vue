@@ -11,7 +11,7 @@
       </el-form>
       <div class="btn_box">
         <span>
-          <a href="javascript:;">忘记密码?</a>
+          <a href="javascript:;" @click.prevent="toRegister">没有用户？请先注册！</a>
         </span>
         <div class="login_btn">
           <el-button type="success" @click="toLogin">登录</el-button>
@@ -73,6 +73,10 @@ export default {
     /* 点击重置按钮触发的事件 */
     toReset() {
       this.$refs.loginRuleForm.resetFields()
+    },
+    /* 点击跳转到注册界面 */
+    toRegister() {
+      this.$router.push('register')
     }
   }
 }

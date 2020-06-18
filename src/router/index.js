@@ -4,6 +4,8 @@ import VueRouter from 'vue-router'
 /* 引入组件 */
 // import Login from '../components/login.vue' // 登录组件
 const Login = () => import(/* webpackChunkName: "login_home" */ '../components/login.vue')
+// import Register from '../components/register.vue' // 注册组件
+const Register = () => import(/* webpackChunkName: "register_home" */ '../components/register.vue')
 // import Home from '../components/home.vue' // 首页组件
 const Home = () => import(/* webpackChunkName: "login_home" */ '../components/home.vue')
 
@@ -32,6 +34,9 @@ const GoodsAdd = () => import(/* webpackChunkName: "goods_goodsAdd" */ '../compo
 // import Order from '../components/order/order' // 订单列表组件
 const Order = () => import(/* webpackChunkName: "order" */ '../components/order/order')
 
+// import Map from '../components/map' // 地图组件
+const Map = () => import(/* webpackChunkName: "map" */ '../components/map')
+
 
 Vue.use(VueRouter)
 
@@ -41,6 +46,9 @@ const routes = [{
 }, {
   path: '/login',
   component: Login
+}, {
+  path: '/register',
+  component: Register
 },
 {
   path: '/home',
@@ -55,7 +63,8 @@ const routes = [{
     { path: '/params', component: Params },
     { path: '/goods', component: Goods },
     { path: '/goods/goodsAdd', component: GoodsAdd },
-    { path: '/orders', component: Order }
+    { path: '/order', component: Order },
+    { path: '/map', component: Map },
   ]
 }
 ]
@@ -67,6 +76,7 @@ const router = new VueRouter({
 /* 使用导航守卫来判断用户输入的是否为login页面或者别的页面 */
 router.beforeEach((to, from, next) => {
   if (to.path == '/login') return next() // 如果输入的是login就直接放行
+  if (to.path == '/register') return next() // 如果输入的是register就直接放行
   // 获取本地存储到session的user值,如果没有,证明玩家没有进行登录操作,强制跳转到login页面
   const token = window.sessionStorage.getItem('user')
   if (!token) return next('/login') // 没有获取到token证明没有进行登录操作

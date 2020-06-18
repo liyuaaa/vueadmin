@@ -161,11 +161,11 @@ export default {
               goods_weight: this.editRuleForm.goods_weight
             }
           )
-          if (res.meta.status != 201) {
+          if (res.meta.status != 200) {
             console.log(res)
             return this.$message.error('更新数据失败！')
           }
-          this.$message.error('更新数据成功！')
+          this.$message.success('更新数据成功！')
           this.editDialogVisible = false
           this.getGoodsData()
         } else {

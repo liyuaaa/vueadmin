@@ -24,7 +24,7 @@
         <el-table-column label="#" type="index"></el-table-column>
         <el-table-column prop="username" label="姓名" width="180"></el-table-column>
         <el-table-column prop="mobile" label="电话"></el-table-column>
-        <el-table-column prop="role_name" label="角色"></el-table-column>
+        <el-table-column prop="rolename" label="角色"></el-table-column>
         <el-table-column prop="mg_state" label="状态">
           <template v-slot="scoped">
             <el-switch
@@ -115,15 +115,15 @@
         <el-select v-model="rolesSelectData" placeholder="请选择">
           <el-option
             v-for="item in rolesData"
-            :key="item.id"
+            :key="item.roleId"
             :label="item.roleName"
-            :value="item.id"
+            :value="item.roleId"
           ></el-option>
         </el-select>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDialogEnter">确 定</el-button>
+        <el-button @click="rolesDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addDialogRolesEnter">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -207,11 +207,12 @@ export default {
       const { data: res } = await this.$axios.get('users', {
         params: this.queryUser
       })
+      console.log(res)
       if (res.meta.status != 200) {
         return this.$message.error('获取数据失败')
       }
       this.usersList = res.data.users
-      this.usersCount = res.data.total
+      this.usersCount = res.data.totalpage
     },
     // 修改用户状态触发的事件
     setState(id, state) {
@@ -241,6 +242,14 @@ export default {
       // 判断表单验证是否通过
       this.$refs.addRuleFormRef.validate(async valid => {
         if (valid) {
+          //判断用户名是否存在
+          const { data: isExist } = await this.$axios.post('isExist', {
+            username: this.addRuleForm.username
+          })
+          //用户名已经存在
+          if (isExist.meta.status != 200) {
+            return this.$message.error('用户名已经存在')
+          }
           // 发送数据到后台进行添加用户
           const { data: res } = await this.$axios.post(
             'users',
@@ -310,7 +319,8 @@ export default {
       this.rolesData = res.data
     },
     // 点击角色管理对话框的确定按钮触发的事件
-    async addDialogEnter() {
+    async addDialogRolesEnter() {
+      console.log(this.rolesSelectData)
       if (!this.rolesSelectData) return this.$message.error('请选择数据！！')
       const { data: res } = await this.$axios.put(
         `users/${this.rolesRuleForm.id}/role`,

@@ -44,7 +44,7 @@ import {
   Checkbox,
   Upload,
   Timeline,
-  TimelineItem
+  TimelineItem,
 } from 'element-ui'
 
 Vue.prototype.$message = Message

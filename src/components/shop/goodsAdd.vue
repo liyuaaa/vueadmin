@@ -74,7 +74,8 @@
       </el-tab-pane>
       <el-tab-pane label="商品图片" name="3">
         <el-upload
-          :action="upLoadUrl"
+          ref="upload"
+          action="http://127.0.0.1:8899/api/upload"
           :on-preview="picHandlePreview"
           :on-success="picHandleSuccess"
           :on-remove="picHandleRemove"
@@ -146,7 +147,7 @@ export default {
       onlyList: [], // 获取静态属性的数据
       picSrcShow: '', // 获取显示图片
       picDialogVisible: false, // 图片弹出框是否显示
-      upLoadUrl: 'http://127.0.0.1:8888/api/private/v1/upload', // 图片上传的位置
+      upLoadUrl: 'http://127.0.0.1:8899/tmp_uploads', // 图片上传的位置
       headerToken: {
         // 获取token验证的Authorization字段，来让图片能保存到后台
         Authorization: window.sessionStorage.getItem('user')
@@ -158,7 +159,7 @@ export default {
     // 获取基本信息级联选择器里面的数据
     async getCategoriesData() {
       const { data: res } = await this.$axios.get('categories')
-      this.categoriesList = res.data
+      this.categoriesList = res.data.data
     },
     // 基本信息的级联选择器选中的时候触发的事件
     handleChange() {
@@ -212,8 +213,7 @@ export default {
       }
     },
     // 点击上传图片的图片触发的事件
-    picHandlePreview(file) {
-      console.log(file)
+    picHandlePreview(files) {
       // 获取上传到的图片
       this.picSrcShow = file.response.data.url
       this.picDialogVisible = true
@@ -248,14 +248,18 @@ export default {
           infoData.goods_cat = infoData.goods_cat.join(',')
           // 获取动态参数和静态属性的数据，存放到attrs中
           this.manyList.forEach(item => {
+            console.log(item)
             const attrsData = {
-              attr_id: item.attr_id,
-              attr_id: item.attr_vals.join(' ')
+              attr_id: item.id,
+              attr_vals: item.attr_vals.join(' ')
             }
             infoData.attrs.push(attrsData)
           })
           this.onlyList.forEach(item => {
-            const attrsData = { attr_id: item.attr_id, attr_id: item.attr_vals }
+            const attrsData = {
+              attr_id: item.id,
+              attr_vals: item.attr_vals
+            }
             infoData.attrs.push(attrsData)
           })
           console.log(infoData)

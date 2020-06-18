@@ -32,7 +32,7 @@
             <!-- 一级菜单 -->
             <template slot="title">
               <i :class="leftIcon[item.id]"></i>
-              <span>{{ item.authName }}</span>
+              <span>{{ item.authname }}</span>
             </template>
             <!-- 二级菜单 -->
             <el-menu-item
@@ -42,9 +42,14 @@
               @click="activeNavClick('/'+item2.path)"
             >
               <i class="el-icon-s-operation"></i>
-              <span slot="title">{{item2.authName}}</span>
+              <span slot="title">{{item2.authname}}</span>
             </el-menu-item>
           </el-submenu>
+          <!-- 地图位置 -->
+          <el-menu-item index="/map" @click="activeNavClick('/map')">
+            <i class="el-icon-s-promotion"></i>
+            <span slot="title">地图位置</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container class="home_container_main">
@@ -150,11 +155,11 @@ export default {
       searchVal: '',
       leftIconBtn: 'el-icon-back', // 左侧侧边栏的按钮图标
       leftIcon: {
-        125: 'el-icon-user-solid',
-        103: 'el-icon-s-help',
-        101: 'el-icon-s-cooperation',
-        102: 'el-icon-s-order',
-        145: 'el-icon-s-platform'
+        1: 'el-icon-user-solid',
+        2: 'el-icon-s-help',
+        3: 'el-icon-s-cooperation',
+        4: 'el-icon-s-order',
+        5: 'el-icon-s-platform'
       },
       leftData: [], // 左侧选项数据
       isLeftFlag: false, // 左侧选项是否折叠
@@ -194,6 +199,7 @@ export default {
     /* 左侧侧边栏的选项 */
     async getLeftMsg() {
       const { data: res } = await this.$axios.get('menus')
+      console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error('获取选项失败！！')
       }
@@ -422,6 +428,7 @@ export default {
   border-radius: 50%;
   display: flex;
   justify-content: center;
+  align-items: center;
   background-color: #e84118;
   color: #f1f2f7;
   padding: 0;

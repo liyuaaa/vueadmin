@@ -9,7 +9,7 @@
     <el-card>
       <el-table :data="rightsList" border stripe>
         <el-table-column label="#" width="50" type="index"></el-table-column>
-        <el-table-column prop="authName" label="权限管理"></el-table-column>
+        <el-table-column prop="authname" label="权限管理"></el-table-column>
         <el-table-column prop="path" label="路径"></el-table-column>
         <el-table-column prop="level" label="权限等级">
           <template v-slot="scoped">

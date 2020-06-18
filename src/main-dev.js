@@ -9,6 +9,8 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 /* 引入axios' */
 import axios from 'axios'
+/* 引入Qs */
+import qs from 'qs';
 
 /* 引入百度地图插件 */
 import BaiduMap from 'vue-baidu-map'
@@ -36,18 +38,21 @@ axios.interceptors.response.use(config => {
 })
 /* 把axios挂在到Vue上面 */
 Vue.prototype.$axios = axios
+Vue.prototype.$qs = qs;
 /* 配置axios的默认请求路径 */
-axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+axios.defaults.baseURL = 'http://127.0.0.1:8899/api/'
+
+//第三方表格
 Vue.component('tree-table', TreeTable)
 
 Vue.use(BaiduMap, {
 	// ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
-	ak: 'ASuBNPd2MUgeYVuvCAYSKTz6mM0GsYuI'
+	ak: 'PpZQY4uKeu9ndEbV5TNOOtVa2fxuq2Au'
 })
 
 // 时间过滤器
 Vue.filter('formartDate', function (value) {
-	const data = new Date(value) // 获取对应的事件
+	const data = new Date(value) // 获取对应的时间
 	const Y = data.getFullYear() // 获取年
 	// 使用padStart要把数据改为字符串，需要在获取到的时间后面添加空字符串即可把数据变成字符串
 	const M = (data.getMonth() + 1 + '').padStart(2, '0') // 获取月,当获取的时间不足两位数时候，使用padStart来进行字符串填充'0';

@@ -70,7 +70,7 @@
             <!-- 使用级联选择器来对数据进行渲染 -->
             <el-cascader
               v-model="addcategoriesData"
-              :options="categoriesList"
+              :options="categoriesCascaderList"
               :props="addPropsData"
               @change="addCategoriesClick"
               clearable
@@ -147,6 +147,7 @@ export default {
           { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
         ]
       },
+      categoriesCascaderList: [], //级联选择器里面的数据
       addPropsData: {
         // 级联选择器的配置信息
         checkStrictly: 'true',
@@ -171,10 +172,12 @@ export default {
       const { data: res } = await this.$axios.get('categories', {
         params: this.queryInfo
       })
-      if (res.meta.status != 200) {
+      const { data: cascader } = await this.$axios.get('categories') //级联选择器里面的数据
+      if (res.meta.status != 200 || cascader.meta.status != 200) {
         return this.message.error('获取数据失败!')
       }
-      this.categoriesList = res.data.result
+      this.categoriesList = res.data.data
+      this.categoriesCascaderList = cascader.data.data
       this.total = res.data.total
     },
     // 分页功能数量发生变化触发的事件
@@ -224,7 +227,6 @@ export default {
           this.queryInfo.type = 3
           this.addDialogVisible = false
           this.getCategoriesData()
-          console.log(res)
         } else {
           return false
         }
